@@ -48,13 +48,27 @@ class MyEventEmitter {
    }
    
    on(eventName, callback){
-     this.events[eventName] = callback
+     if (!this.events[eventName]) {
+      this.events[eventName] = []
+    }
+    this.events[eventName].push(callback)
+   return () => {
+     this.events[eventName] = undefined
    }
+  
+  }
+
+
    emit(eventName, ...data){
     //this.events[eventName] () ou plus simplement
-    const callback = this.events[eventName]
-    if (callback !== undefined) {
-      callback(...data)
+    const arrCallback = this.events[eventName]
+    if (arrCallback !== undefined) {
+      arrCallback.forEach(callback => {
+        if (callback.length === data.length){
+          callback(...data)
+
+        }
+      })
     
     }
    }
